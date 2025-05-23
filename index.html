@@ -5,33 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Streamer University - Multi-Stream Viewer</title>
   <style>
-    body { font-family: sans-serif; margin: 0; background: #111; color: #fff; }
+    body { font-family: sans-serif; margin: 0; background: #111; color: #fff; display: flex; flex-direction: column; height: 100vh; }
     header, footer { padding: 1rem; text-align: center; background: #222; }
     h1 { margin: 0.5em 0; }
-    .stream-selector-wrapper { padding: 1rem; background: #1c1c1c; text-align: center; }
-    .stream-selector { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; max-height: 11rem; overflow: hidden; transition: max-height 0.5s ease; }
-    .stream-selector.expanded { max-height: none; }
-    .toggle-button { background: #444; color: #fff; border: none; padding: 0.5rem 1rem; cursor: pointer; margin-top: 1rem; border-radius: 5px; }
-    .stream-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; padding: 1rem; }
+    main { display: flex; flex: 1; overflow: hidden; }
+    .stream-selector-wrapper { width: 300px; background: #1c1c1c; padding: 1rem; overflow-y: auto; }
+    .stream-selector { display: flex; flex-direction: column; gap: 0.5rem; }
+    .toggle-button { display: none; }
+    .stream-container { flex: 1; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; padding: 1rem; overflow-y: auto; }
     .stream-box { display: flex; flex-direction: column; gap: 0.5rem; }
     iframe { border: none; }
     label { display: flex; align-items: center; gap: 0.5rem; }
     .stream-selector input { transform: scale(1.2); }
-    #searchInput { padding: 0.5rem; width: 300px; border-radius: 5px; border: none; }
+    #searchInput { padding: 0.5rem; width: 100%; border-radius: 5px; border: none; margin-bottom: 1rem; }
   </style>
 </head>
 <body>
   <header>
     <h1>📺 Streamer University Viewer</h1>
     <p>Select streamers below to watch multiple Twitch streams and chats simultaneously</p>
-    <input type="text" id="searchInput" placeholder="Search for a streamer...">
   </header>
 
-  <div class="stream-selector-wrapper">
-    <div class="stream-selector" id="streamSelector"></div>
-    <button class="toggle-button" id="toggleButton">Show More</button>
-  </div>
-  <div class="stream-container" id="streamContainer"></div>
+  <main>
+    <div class="stream-selector-wrapper">
+      <input type="text" id="searchInput" placeholder="Search for a streamer...">
+      <div class="stream-selector" id="streamSelector"></div>
+    </div>
+    <div class="stream-container" id="streamContainer"></div>
+  </main>
 
   <footer>
     <p>Made with ❤️ for Streamer University 2025</p>
@@ -61,7 +62,6 @@
     const streamSelector = document.getElementById('streamSelector');
     const streamContainer = document.getElementById('streamContainer');
     const searchInput = document.getElementById('searchInput');
-    const toggleButton = document.getElementById('toggleButton');
     const domain = location.hostname;
 
     function renderCheckboxes(filter = "") {
@@ -114,11 +114,6 @@
 
     searchInput.addEventListener('input', e => {
       renderCheckboxes(e.target.value);
-    });
-
-    toggleButton.addEventListener('click', () => {
-      streamSelector.classList.toggle('expanded');
-      toggleButton.textContent = streamSelector.classList.contains('expanded') ? 'Show Less' : 'Show More';
     });
 
     renderCheckboxes();

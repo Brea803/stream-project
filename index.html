@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Streamer University - Multi-Stream Viewer</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; background: #111; color: #fff; }
+    header, footer { padding: 1rem; text-align: center; background: #222; }
+    h1 { margin: 0.5em 0; }
+    .stream-selector { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; padding: 1rem; background: #1c1c1c; }
+    .stream-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; padding: 1rem; }
+    iframe { border: none; width: 400px; height: 225px; }
+    label { display: flex; align-items: center; gap: 0.5rem; }
+    .stream-selector input { transform: scale(1.2); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📺 Streamer University Viewer</h1>
+    <p>Select streamers below to watch multiple Twitch streams simultaneously</p>
+  </header>
+
+  <div class="stream-selector">
+    <label><input type="checkbox" value="kai_cenat" /> Kai Cenat</label>
+    <label><input type="checkbox" value="adinross" /> Adin Ross</label>
+    <label><input type="checkbox" value="yourfellowarab" /> YourFellowArab</label>
+    <label><input type="checkbox" value="duke_dennis" /> Duke Dennis</label>
+    <label><input type="checkbox" value="chrisnxtdoor" /> Chrisnxtdoor</label>
+  </div>
+
+  <div class="stream-container" id="streamContainer"></div>
+
+  <footer>
+    <p>Made with ❤️ for Streamer University 2025</p>
+  </footer>
+
+  <script>
+    const streamContainer = document.getElementById('streamContainer');
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const domain = location.hostname;
+
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        streamContainer.innerHTML = '';
+        checkboxes.forEach(box => {
+          if (box.checked) {
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://player.twitch.tv/?channel=${box.value}&parent=${domain}`;
+            iframe.allowFullscreen = true;
+            streamContainer.appendChild(iframe);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

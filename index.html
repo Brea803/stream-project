@@ -9,7 +9,7 @@
     header, footer { padding: 1rem; text-align: center; background: #222; }
     h1 { margin: 0.5em 0; }
     main { display: flex; flex: 1; overflow: hidden; }
-    .stream-selector-wrapper { width: 300px; background: #1c1c1c; padding: 1rem; overflow-y: auto; }
+    .stream-selector-wrapper { width: 300px; background: #1c1c1c; padding: 1rem; overflow-y: auto; position: relative; }
     .stream-selector { display: flex; flex-direction: column; gap: 0.5rem; }
     .toggle-button { display: none; }
     .stream-container { flex: 1; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; padding: 1rem; overflow-y: auto; }
@@ -17,7 +17,7 @@
     iframe { border: none; }
     label { display: flex; align-items: center; gap: 0.5rem; }
     .stream-selector input { transform: scale(1.2); }
-    #searchInput { padding: 0.5rem; width: 100%; border-radius: 5px; border: none; margin-bottom: 1rem; }
+    #searchInput { padding: 0.5rem; width: 100%; border-radius: 5px; border: none; margin-bottom: 1rem; position: sticky; top: 0; background: #1c1c1c; z-index: 1; }
   </style>
 </head>
 <body>

@@ -8,7 +8,10 @@
     body { font-family: sans-serif; margin: 0; background: #111; color: #fff; }
     header, footer { padding: 1rem; text-align: center; background: #222; }
     h1 { margin: 0.5em 0; }
-    .stream-selector { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; padding: 1rem; background: #1c1c1c; }
+    .stream-selector-wrapper { padding: 1rem; background: #1c1c1c; text-align: center; }
+    .stream-selector { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; max-height: 11rem; overflow: hidden; transition: max-height 0.5s ease; }
+    .stream-selector.expanded { max-height: none; }
+    .toggle-button { background: #444; color: #fff; border: none; padding: 0.5rem 1rem; cursor: pointer; margin-top: 1rem; border-radius: 5px; }
     .stream-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; padding: 1rem; }
     .stream-box { display: flex; flex-direction: column; gap: 0.5rem; }
     iframe { border: none; }
@@ -24,7 +27,10 @@
     <input type="text" id="searchInput" placeholder="Search for a streamer...">
   </header>
 
-  <div class="stream-selector" id="streamSelector"></div>
+  <div class="stream-selector-wrapper">
+    <div class="stream-selector" id="streamSelector"></div>
+    <button class="toggle-button" id="toggleButton">Show More</button>
+  </div>
   <div class="stream-container" id="streamContainer"></div>
 
   <footer>
@@ -33,7 +39,9 @@
 
   <script>
     const streamList = [
-      "HoneyyJade", "Tbcnks", "Iloswork", "BrooklynFrost", "Sarahynh", "MyrenMakayla", "Yagirldes", "Folass",
+      " DDG", "ChrisnNxtDoor", "Agent00", "Cookingwithkya", "IndiaLove", "Iamthekingoffitness", "ImDontai",
+      "MarkusKing", "DukeDennis", "CindyGallop", "ExtraEmily", "Preacherquis", "AimHigh", "ZiasAndBLou",
+      "OjaySuave", "FunnyMarco", "BenDaDonn", "HoneyyJade", "Tbcnks", "Iloswork", "BrooklynFrost", "Sarahynh", "MyrenMakayla", "Yagirldes", "Folass",
       "ScumTK", "Shell0", "Iamtrinlij", "Chicklet", "Nina", "AaverieIman", "Nolimitjay", "Strifecos", "Gianni",
       "Meriyam", "Lightskinmonte", "Y0nn4", "Shank", "SophieHyder", "Brischeese", "Reggie", "JankyRondo",
       "Tyrone", "DannyBans", "RipItRandy", "Ayemariiii", "_luvesti", "Tota", "Giovanni", "Summyahmarie",
@@ -53,16 +61,24 @@
     const streamSelector = document.getElementById('streamSelector');
     const streamContainer = document.getElementById('streamContainer');
     const searchInput = document.getElementById('searchInput');
+    const toggleButton = document.getElementById('toggleButton');
     const domain = location.hostname;
 
     function renderCheckboxes(filter = "") {
+      const currentlySelected = Array.from(document.querySelectorAll('.stream-selector input:checked')).map(input => input.value);
       streamSelector.innerHTML = "";
+
       streamList.forEach(name => {
         if (name.toLowerCase().includes(filter.toLowerCase())) {
           const label = document.createElement('label');
           const input = document.createElement('input');
           input.type = 'checkbox';
           input.value = name;
+
+          if (currentlySelected.includes(name)) {
+            input.checked = true;
+          }
+
           label.appendChild(input);
           label.appendChild(document.createTextNode(" " + name));
           streamSelector.appendChild(label);
@@ -98,6 +114,11 @@
 
     searchInput.addEventListener('input', e => {
       renderCheckboxes(e.target.value);
+    });
+
+    toggleButton.addEventListener('click', () => {
+      streamSelector.classList.toggle('expanded');
+      toggleButton.textContent = streamSelector.classList.contains('expanded') ? 'Show Less' : 'Show More';
     });
 
     renderCheckboxes();

@@ -17,7 +17,7 @@
     iframe { border: none; }
     label { display: flex; align-items: center; gap: 0.5rem; }
     .stream-selector input { transform: scale(1.2); }
-    #searchInput { padding: 0.5rem; width: 100%; border-radius: 5px; border: none; margin-bottom: 1rem; position: sticky; top: 0; background: #1c1c1c; z-index: 1; }
+    #searchInput { padding: 0.5rem; width: 100%; border-radius: 5px; border: none; margin-bottom: 1rem; position: sticky; top: 0; background: #333; z-index: 10; color: #fff; }
   </style>
 </head>
 <body>
@@ -89,26 +89,36 @@
     }
 
     function updateStreams() {
-      streamContainer.innerHTML = "";
-      const selected = document.querySelectorAll('.stream-selector input:checked');
+      const selected = Array.from(document.querySelectorAll('.stream-selector input:checked'));
       selected.forEach(box => {
-        const streamBox = document.createElement('div');
-        streamBox.className = 'stream-box';
+        if (!document.getElementById(`stream-${box.value}`)) {
+          const streamBox = document.createElement('div');
+          streamBox.className = 'stream-box';
+          streamBox.id = `stream-${box.value}`;
 
-        const streamIframe = document.createElement('iframe');
-        streamIframe.src = `https://player.twitch.tv/?channel=${box.value}&parent=${domain}`;
-        streamIframe.width = "400";
-        streamIframe.height = "225";
-        streamIframe.allowFullscreen = true;
+          const streamIframe = document.createElement('iframe');
+          streamIframe.src = `https://player.twitch.tv/?channel=${box.value}&parent=${domain}`;
+          streamIframe.width = "400";
+          streamIframe.height = "225";
+          streamIframe.allowFullscreen = true;
 
-        const chatIframe = document.createElement('iframe');
-        chatIframe.src = `https://www.twitch.tv/embed/${box.value}/chat?parent=${domain}`;
-        chatIframe.width = "400";
-        chatIframe.height = "300";
+          const chatIframe = document.createElement('iframe');
+          chatIframe.src = `https://www.twitch.tv/embed/${box.value}/chat?parent=${domain}`;
+          chatIframe.width = "400";
+          chatIframe.height = "300";
 
-        streamBox.appendChild(streamIframe);
-        streamBox.appendChild(chatIframe);
-        streamContainer.appendChild(streamBox);
+          streamBox.appendChild(streamIframe);
+          streamBox.appendChild(chatIframe);
+          streamContainer.appendChild(streamBox);
+        }
+      });
+
+      const currentValues = selected.map(s => s.value);
+      Array.from(streamContainer.children).forEach(child => {
+        const channel = child.id.replace("stream-", "");
+        if (!currentValues.includes(channel)) {
+          streamContainer.removeChild(child);
+        }
       });
     }
 

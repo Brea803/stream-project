@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Streamer University - Multi-Stream Viewer</title>
   <style>
     body { font-family: sans-serif; margin: 0; background: #111; color: #fff; }
@@ -10,25 +10,21 @@
     h1 { margin: 0.5em 0; }
     .stream-selector { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; padding: 1rem; background: #1c1c1c; }
     .stream-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; padding: 1rem; }
-    iframe { border: none; width: 400px; height: 225px; }
+    .stream-box { display: flex; flex-direction: column; gap: 0.5rem; }
+    iframe { border: none; }
     label { display: flex; align-items: center; gap: 0.5rem; }
     .stream-selector input { transform: scale(1.2); }
+    #searchInput { padding: 0.5rem; width: 300px; border-radius: 5px; border: none; }
   </style>
 </head>
 <body>
   <header>
     <h1>📺 Streamer University Viewer</h1>
-    <p>Select streamers below to watch multiple Twitch streams simultaneously</p>
+    <p>Select streamers below to watch multiple Twitch streams and chats simultaneously</p>
+    <input type="text" id="searchInput" placeholder="Search for a streamer...">
   </header>
 
-  <div class="stream-selector">
-    <label><input type="checkbox" value="kai_cenat" /> Kai Cenat</label>
-    <label><input type="checkbox" value="adinross" /> Adin Ross</label>
-    <label><input type="checkbox" value="yourfellowarab" /> YourFellowArab</label>
-    <label><input type="checkbox" value="duke_dennis" /> Duke Dennis</label>
-    <label><input type="checkbox" value="chrisnxtdoor" /> Chrisnxtdoor</label>
-  </div>
-
+  <div class="stream-selector" id="streamSelector"></div>
   <div class="stream-container" id="streamContainer"></div>
 
   <footer>
@@ -36,23 +32,75 @@
   </footer>
 
   <script>
+    const streamList = [
+      "HoneyyJade", "Tbcnks", "Iloswork", "BrooklynFrost", "Sarahynh", "MyrenMakayla", "Yagirldes", "Folass",
+      "ScumTK", "Shell0", "Iamtrinlij", "Chicklet", "Nina", "AaverieIman", "Nolimitjay", "Strifecos", "Gianni",
+      "Meriyam", "Lightskinmonte", "Y0nn4", "Shank", "SophieHyder", "Brischeese", "Reggie", "JankyRondo",
+      "Tyrone", "DannyBans", "RipItRandy", "Ayemariiii", "_luvesti", "Tota", "Giovanni", "Summyahmarie",
+      "Barbieskie", "Izzy_Kinda", "Maleni", "Hoodbabies", "WendyOrtiz", "EvelynOrtiz", "BigWinnn", "RaKai",
+      "MaxwellYe", "2kboo", "Corey2u", "Aya", "Gotti", "Keeyahthecreator", "Ginalaitschek", "junniechime",
+      "snowwcone", "MrsChimChim", "Kvrtez", "Badkidjay", "Shaqqwit2qs", "Quan", "Punga", "MayaBuckets",
+      "Ryah", "AutumnReign", "Valan", "PixelDrink", "DeshaeFrost", "Malachiwyd", "Crispymo", "EmilyCC",
+      "SaraSheehan", "Mari", "VanessaLoud", "Jefe", "Saltygummibear", "Dabo", "Arky", "Vboogie", "AshAlk",
+      "SamHam", "AllisonKroes", "Ray", "Dezz", "Wade", "Thickey", "Jamal", "KingSammelot", "Caiuwus",
+      "taeda_geez", "JayCincoo", "ShollyKNS", "Okaysirr", "Tylil", "Marcissist", "Lala", "TreasureOsiria",
+      "Turnahbaby", "LightskinKim", "Jo", "Catalixia", "KokoNata", "Aldogotit", "Nizzy_", "ZeddyWill",
+      "Rynenzo", "EvelynandBobby", "Kanklive", "Emildztv", "Chrushexotic1x", "Iluvuncynthia", "Kelo",
+      "KarelessKitty", "BlasianBabylola", "Kbakes", "PrimatePaige", "Daejorno", "Ivanbetter", "AlexandJessica",
+      "Bdestined", "JPTGames", "Kishka", "Raud", "YohanUja", "DatBoiGio_", "Bribretv"
+    ];
+
+    const streamSelector = document.getElementById('streamSelector');
     const streamContainer = document.getElementById('streamContainer');
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const searchInput = document.getElementById('searchInput');
     const domain = location.hostname;
 
-    checkboxes.forEach(cb => {
-      cb.addEventListener('change', () => {
-        streamContainer.innerHTML = '';
-        checkboxes.forEach(box => {
-          if (box.checked) {
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://player.twitch.tv/?channel=${box.value}&parent=${domain}`;
-            iframe.allowFullscreen = true;
-            streamContainer.appendChild(iframe);
-          }
-        });
+    function renderCheckboxes(filter = "") {
+      streamSelector.innerHTML = "";
+      streamList.forEach(name => {
+        if (name.toLowerCase().includes(filter.toLowerCase())) {
+          const label = document.createElement('label');
+          const input = document.createElement('input');
+          input.type = 'checkbox';
+          input.value = name;
+          label.appendChild(input);
+          label.appendChild(document.createTextNode(" " + name));
+          streamSelector.appendChild(label);
+
+          input.addEventListener('change', updateStreams);
+        }
       });
+    }
+
+    function updateStreams() {
+      streamContainer.innerHTML = "";
+      const selected = document.querySelectorAll('.stream-selector input:checked');
+      selected.forEach(box => {
+        const streamBox = document.createElement('div');
+        streamBox.className = 'stream-box';
+
+        const streamIframe = document.createElement('iframe');
+        streamIframe.src = `https://player.twitch.tv/?channel=${box.value}&parent=${domain}`;
+        streamIframe.width = "400";
+        streamIframe.height = "225";
+        streamIframe.allowFullscreen = true;
+
+        const chatIframe = document.createElement('iframe');
+        chatIframe.src = `https://www.twitch.tv/embed/${box.value}/chat?parent=${domain}`;
+        chatIframe.width = "400";
+        chatIframe.height = "300";
+
+        streamBox.appendChild(streamIframe);
+        streamBox.appendChild(chatIframe);
+        streamContainer.appendChild(streamBox);
+      });
+    }
+
+    searchInput.addEventListener('input', e => {
+      renderCheckboxes(e.target.value);
     });
+
+    renderCheckboxes();
   </script>
 </body>
 </html>
